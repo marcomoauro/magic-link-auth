@@ -40,11 +40,10 @@
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
     "memoizee": "^0.4.15",
+    "mysql2": "^3.9.2",
     "nano-id": "^1.1.0",
     "nodemailer": "^6.9.13",
-    "p-queue": "^8.0.1",
-    "pg-monitor": "^2.0.0",
-    "pg-promise": "^11.5.5"
+    "p-queue": "^8.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

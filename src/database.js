@@ -1,41 +1,26 @@
-import pgPromise from 'pg-promise';
-import monitor from 'pg-monitor';
-import log from "./log.js";
+import mysql from 'mysql2/promise'
 
-const initOptions = {
-  query(e) {
-    monitor.query(e);
-  },
-  error(err, e) {
-    monitor.error(err, e);
-  }
-};
+let pool
 
-const pgp = pgPromise(initOptions);
-
-// https://stackoverflow.com/questions/39168501/pg-promise-returns-integers-as-strings
-pgp.pg.types.setTypeParser(20, parseInt)
-
-let db;
-
-monitor.setLog((msg, info) => {
-  info.display = false; // to avoid library default log
-
-  const query_log = msg.split('\n').slice(1).join(' ')
-  log.query(query_log);
-});
-
-const getConnectionPool = () => {
-  if (!db) {
-    db = pgp({
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      },
-      max: 10,
-    });
-  }
-  return db
+export const query = async (sql, params) => {
+  await getConnectionPool()
+  const [results, ] = await pool.query(sql, params)
+  return results
 }
 
-export default getConnectionPool()
+const getConnectionPool = async () => {
+  if (!pool) {
+    pool = await mysql.createPool({
+      host: process.env.DB_HOST,
+      //port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0
+    })
+  }
+
+  return pool
+}

@@ -1,19 +1,16 @@
 import Router from '@koa/router';
 import {healthcheck} from "./api/healthcheck.js";
-import {routeToFunction} from "./middlewares.js";
-import {throw422, throw500} from "./controllers/errors.js";
-import {getNewsletter} from "./controllers/newsletters.js";
-import {pong} from "./api/pong.js";
+import {authenticate, routeToFunction} from "./middlewares.js";
+import {sendMagicLink, loginByMagicLink} from "./controllers/auth.js";
+import {me} from "./controllers/user.js";
 
 const router = new Router();
 
 router.get('/healthcheck', routeToFunction(healthcheck));
 
-router.get('/errors/422', routeToFunction(throw422));
-router.get('/errors/500', routeToFunction(throw500));
+router.post('/send-magic-link', routeToFunction(sendMagicLink));
+router.post('/login-by-magic-link', routeToFunction(loginByMagicLink));
 
-router.get('/newsletters/:id', routeToFunction(getNewsletter));
-
-router.get('/ping', routeToFunction(pong));
+router.get('/users/me', authenticate, routeToFunction(me));
 
 export default router;

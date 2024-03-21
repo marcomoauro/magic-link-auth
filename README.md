@@ -1,6 +1,6 @@
-# Node backend template
+# Magic Link Authentication
 
-Backend template for Node.js.
+Magic Link Authentication in Node.js.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ yarn install
 
 ## How to use
 
-- Create the .env file based on the env-template, the only env to configure is DATABASE_URL.
+- Create the .env file based on the env-template.
 - Starts the server by executing:
 ```sh
 yarn serve:development

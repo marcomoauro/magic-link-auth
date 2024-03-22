@@ -13,7 +13,7 @@ export const sendMagicLink = async ({email}) => {
   const magic_token = createTokenForMagicLink({email})
 
   const subject = '🪄 Magic link - confirm your email 🔗'
-  const body = '🔐 Click on the link below to login:\n\n' + '🔗 ' + 'process.env.PODRIDGE_URL' + '/login?magic_token=' + magic_token
+  const body = '🔐 Click on the link below to login:\n\n' + '🔗 ' + 'https://magic-link-auth.bubbleapps.io/version-test?magic_token=' + magic_token
   await sendMail({email, subject, body})
 
   return {success: true}

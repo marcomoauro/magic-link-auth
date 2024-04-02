@@ -1,38 +1,45 @@
 @startuml
 actor User
-participant "Client UI" as Client
+participant "Client" as Client
 participant "Server" as Server
 participant "Email Service" as EmailService
 database "Database" as Database
 
+autonumber
+
 User -> Client: Requests access
 activate Client
-Client -> Server: Requests Sign In Token
+Client -> Server: Requests "sign in" token
 activate Server
-Server -> Server: Generates Sign In Token
-Server -> EmailService: Sends Email with Token
+Server -> Server: Generates "sign in" token
+Server -> EmailService: Sends email with token
 activate EmailService
-EmailService --> Server: Confirms Email Sent
+EmailService --> Server: Confirms email sent
 deactivate EmailService
-Server -> Client: Confirms Magic Link Sent
+Server -> Client: Confirms magic link sent
 deactivate Server
 Client -> User: Displays confirmation message and link
 deactivate Client
 
 User -> Client: Clicks the link received via email
 activate Client
-Client -> Server: Sends Sign In Token
+Client -> Server: Sends "sign in" token
 activate Server
-Server -> Server: Validates Sign In Token
-Server -> Server: Extracts Email from Token ID
-Server -> Database: Creates User in Database
+Server -> Server: Validates "sign in" token
+Server -> Database: Checks if user exists
 activate Database
-Database --> Server: User Created
+Database -> Server: Returns search result
 deactivate Database
-Server -> Server: Generates Auth Token
-Server --> Client: Confirms Access
+alt User not found
+Server -> Database: Creates user in database
+activate Database
+Database --> Server: User created
+deactivate Database
+end
+Server -> Server: Generates "authentication" token
+Server --> Client: Returns "authentication" token
 deactivate Server
-Client -> User: Access Confirmed
+Client -> User: Access confirmed
 deactivate Client
 
 @enduml

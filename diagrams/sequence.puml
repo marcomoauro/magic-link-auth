@@ -26,7 +26,8 @@ activate Client
 Client -> Server: Sends "sign in" token
 activate Server
 Server -> Server: Validates "sign in" token
-Server -> Database: Checks if user exists
+Server -> Server: Extracts email from "sign in" token
+Server -> Database: Checks if user exists by email
 activate Database
 Database -> Server: Returns search result
 deactivate Database

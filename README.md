@@ -22,4 +22,4 @@ yarn serve:development
 
 ## References
 I talk about this project in this episode of my tech newsletter:
-https://implementing.substack.com/p/how-to-implement-a-magiclink-authentication
+https://implementing.substack.com/p/how-to-implement-a-magic-link-authentication

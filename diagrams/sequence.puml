@@ -9,7 +9,7 @@ autonumber
 
 User -> Client: Requests access
 activate Client
-Client -> Server: Requests "sign in" token
+Client -> Server: Requests sign in via API
 activate Server
 Server -> Server: Generates "sign in" token
 Server -> EmailService: Sends email with token
@@ -23,7 +23,7 @@ deactivate Client
 
 User -> Client: Clicks the link received via email
 activate Client
-Client -> Server: Sends "sign in" token
+Client -> Server: Requests login by magic link via API
 activate Server
 Server -> Server: Validates "sign in" token
 Server -> Server: Extracts email from "sign in" token

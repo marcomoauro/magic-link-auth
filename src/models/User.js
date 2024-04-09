@@ -1,10 +1,11 @@
 import log from '../log.js'
-import {APIError404} from "../errors.js";
+import {APIError404, APIError422} from "../errors.js";
 import {query} from '../database.js'
 
 export default class User {
   id
   email
+  username
 
   constructor(properties) {
     Object.keys(this)
@@ -16,6 +17,7 @@ export default class User {
     const user = new User({
       id: row.id,
       email: row.email,
+      username: row.username,
     })
 
     return user
@@ -77,6 +79,37 @@ export default class User {
                 values (?)`,
       [email]
     );
+
+    const user = await User.get({id})
+
+    return user
+  }
+
+  static update = async (id, params_to_update) => {
+    log.info('Model::User::update', {id, params_to_update})
+
+    if (params_to_update.length === 0) {
+      throw new APIError422('At least one parameter must be provided to update the user.')
+    }
+
+    const {username} = params_to_update
+
+    const params = []
+
+    let query_sql = `
+        update users
+        set
+    `;
+
+    if (username) {
+      query_sql += ` username = ?`;
+      params.push(username);
+    }
+
+    query_sql += ` where id = ?`;
+    params.push(id);
+
+    await query(query_sql, params);
 
     const user = await User.get({id})
 

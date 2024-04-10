@@ -1,6 +1,7 @@
 import log from '../log.js'
 import {APIError404, APIError422} from "../errors.js";
 import {query} from '../database.js'
+import {UsernameBloomFilter} from "../usernameBloomFilter.js";
 
 export default class User {
   id
@@ -41,8 +42,8 @@ export default class User {
     return user
   }
 
-  static get = async ({id, email}) => {
-    log.info('Model::User::get', {id, email})
+  static get = async ({id, email, username}) => {
+    log.info('Model::User::get', {id, email, username})
 
     const params = []
 
@@ -60,6 +61,11 @@ export default class User {
     if (email) {
       query_sql += ` and email = ?`;
       params.push(email);
+    }
+
+    if (username) {
+      query_sql += ` and username = ?`;
+      params.push(username);
     }
 
     const rows = await query(query_sql, params);
@@ -114,5 +120,20 @@ export default class User {
     const user = await User.get({id})
 
     return user
+  }
+
+  static checkUsernameAvailability = async (username) => {
+    const found = await UsernameBloomFilter.has(username)
+    if (!found) return true
+
+    // do a query on database because there may have been a collision of the hash functions in the Bloom Filter
+    try {
+      await User.get({username})
+    } catch (error) {
+      if (error instanceof APIError404) return true
+      throw error
+    }
+
+    return false
   }
 }

@@ -17,10 +17,10 @@ export const me = async () => {
 export const checkUsernameAvailability = async ({username}) => {
   log.info('Controller::users::checkUsernameAvailability', {username})
 
-  const found = await UsernameBloomFilter.has(username)
+  const available = await User.checkUsernameAvailability(username)
 
   return {
-    available: !found
+    available
   }
 }
 
@@ -34,8 +34,8 @@ export const setUsername = async ({username}) => {
     throw new APIError422('Username already set')
   }
 
-  const found = await UsernameBloomFilter.has(username)
-  if (found) {
+  const available = await User.checkUsernameAvailability(username)
+  if (!available) {
     throw new APIError422('Username already taken')
   }
 

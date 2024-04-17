@@ -21,6 +21,11 @@ export default class Cache {
     await cache.del(key);
   }
 
+  static getBitSize = async (key) => {
+    const bit_size = await cache.sendCommand(new Redis.Command('MEMORY', ['USAGE', key]));
+    return bit_size;
+  }
+
   static getClient = () => {
     return cache;
   }

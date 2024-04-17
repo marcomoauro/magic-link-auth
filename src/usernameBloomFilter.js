@@ -1,4 +1,3 @@
-import Redis from 'ioredis';
 import crypto from 'crypto';
 import log from "./log.js";
 import Cache from "./cache.js";
@@ -61,7 +60,7 @@ export class UsernameBloomFilter {
   }
 
   static printMemoryUsage = async () => {
-    const result = await Cache.getClient().sendCommand(new Redis.Command('MEMORY', ['USAGE', this.#cache_key]));
+    const result = await Cache.getBitSize(this.#cache_key);
     console.log(result / 1_000_000, 'MB')
   }
 

@@ -2,6 +2,7 @@ import log from '../log.js'
 import {APIError404, APIError422} from "../errors.js";
 import {query} from '../database.js'
 import {UsernameBloomFilter} from "../usernameBloomFilter.js";
+import Cache from "../cache.js";
 
 export default class User {
   id
@@ -45,6 +46,12 @@ export default class User {
   static get = async ({id, email, username}) => {
     log.info('Model::User::get', {id, email, username})
 
+    // check user in cache
+    if (id) {
+      const user = await Cache.get(`user/${id}`)
+      if (user) return user
+    }
+
     const params = []
 
     let query_sql = `
@@ -73,6 +80,9 @@ export default class User {
     if (rows.length !== 1) throw new APIError404('User not found.')
 
     const user = User.fromDBRow(rows[0])
+
+    // set to cache
+    await Cache.set(`user/${id}`, user, 60 * 5)
 
     return user
   }
@@ -116,6 +126,9 @@ export default class User {
     params.push(id);
 
     await query(query_sql, params);
+
+    // invalidate cache
+    await Cache.delete(`user/${id}`)
 
     const user = await User.get({id})
 

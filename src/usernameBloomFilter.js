@@ -1,8 +1,7 @@
 import Redis from 'ioredis';
 import crypto from 'crypto';
 import log from "./log.js";
-
-const cache = new Redis(process.env.REDIS_URL);
+import Cache from "./cache.js";
 
 export class UsernameBloomFilter {
   static #cache_key = "username_bloom_filter_key";
@@ -13,7 +12,7 @@ export class UsernameBloomFilter {
 
     const indexes = this.#getIndexesFromHashing(username);
     const found_result_bits = await Promise.all(indexes.map(async (index) => {
-        const get = await cache.getbit(this.#cache_key, index);
+        const get = await Cache.getClient().getbit(this.#cache_key, index);
         return get
       })
     );
@@ -26,7 +25,7 @@ export class UsernameBloomFilter {
 
     const indexes = this.#getIndexesFromHashing(username);
     await Promise.all(indexes.map(async (index) => {
-      const add = await cache.setbit(this.#cache_key, index, 1);
+      const add = await Cache.getClient().setbit(this.#cache_key, index, 1);
       return add
     }));
   }
@@ -62,11 +61,11 @@ export class UsernameBloomFilter {
   }
 
   static printMemoryUsage = async () => {
-    const result = await cache.sendCommand(new Redis.Command('MEMORY', ['USAGE', this.#cache_key]));
+    const result = await Cache.getClient().sendCommand(new Redis.Command('MEMORY', ['USAGE', this.#cache_key]));
     console.log(result / 1_000_000, 'MB')
   }
 
   static clear = async () => {
-    await cache.del(this.#cache_key);
+    await Cache.delete(this.#cache_key);
   }
 }

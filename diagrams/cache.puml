@@ -1,0 +1,26 @@
+@startuml
+participant Client
+participant "Server" as Server
+participant "Cache" as Cache
+database "Database" as Database
+
+autonumber
+
+Client -> Server: GET /users/me
+activate Server
+Server -> Cache: getUser(userId)
+
+alt User not in Cache
+    Server -> Database: getUserByQuery(userId)
+    activate Database
+    Database -> Server: return user record
+    deactivate Database
+    Server -> Cache: store user in cache
+    activate Cache
+    Cache --> Server
+    deactivate Cache
+end
+    Server -> Client: return userData
+
+deactivate Server
+@enduml

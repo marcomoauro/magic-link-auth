@@ -6,7 +6,7 @@ import {koaBody} from 'koa-body';
 import {APIError404, APIError405, APIError415, apiErrorManager} from './errors.js';
 import log from './log.js';
 import {
-  initAsyncStorage,
+  initAsyncStorage, initCompressionConfig,
   logIncomingCall,
   routeSummaryLog
 } from './middlewares.js';
@@ -31,6 +31,14 @@ app.use(json());
 app.use(initAsyncStorage);
 app.use(routeSummaryLog);
 app.use(logIncomingCall);
+app.use(compress({
+  //filter: (content_type) => {
+  //  return true
+  //},
+  //threshold: 10,
+}))
+// initialize compression to false for all routes, it will be enabled for specific routes by responseCompressible middleware
+app.use(initCompressionConfig);
 
 app.use(async (ctx, next) => {
   try {

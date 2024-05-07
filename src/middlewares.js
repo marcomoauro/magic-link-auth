@@ -30,8 +30,11 @@ export const routeSummaryLog = koa_log({
   logWith: (ctx) => {
     const log_with = {
       id_transaction: ctx.state.id_transaction,
-      result: ctx.body,
     };
+
+    // "content-encoding" header is set when the response is compressed by koa-compress
+    log_with.result = ctx.response.get('content-encoding') ? '<compressed payload>' : ctx.body;
+
     if (ctx.response.status >= 400) {
       log_with.stack = ctx.state.stack;
       log_with.request_headers = ctx.request.headers;
@@ -40,7 +43,7 @@ export const routeSummaryLog = koa_log({
     }
     return log_with;
   },
-  exclude: (ctx) => process.env.MODE === 'test' || ctx.path.includes('healthcheck') || ctx.path.includes('compression') || path.extname(ctx.path),
+  exclude: (ctx) => process.env.MODE === 'test' || ctx.path.includes('healthcheck') || path.extname(ctx.path),
 });
 
 const ROUTES_SKIP_LOG = ['healthcheck'];
@@ -104,6 +107,17 @@ export const authenticate = async (ctx, next) => {
   }
 
   asyncStorage.enterWith({...asyncStorage.getStore(), user_id});
+
+  await next();
+};
+
+export const initCompressionConfig = async (ctx, next) => {
+  ctx.compress = false;
+  await next();
+}
+
+export const responseCompressible = async (ctx, next) => {
+  ctx.compress = true;
 
   await next();
 };

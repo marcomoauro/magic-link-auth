@@ -1,0 +1,20 @@
+@startuml
+
+entity "customers" {
+  id : PK
+  --
+  name
+  email
+}
+
+entity "orders" {
+  id : PK
+  --
+  # customer_id : FK
+  order_date
+  amount
+}
+
+customers ||--o{ orders
+
+@enduml

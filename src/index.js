@@ -11,6 +11,7 @@ import {
   routeSummaryLog
 } from './middlewares.js';
 import router from './router.js';
+import compress from 'koa-compress';
 
 process.on('uncaughtException', (e) => log.error('uncaughtException', e));
 process.on('unhandledRejection', (e) => log.error('unhandledRejection', e));
@@ -43,6 +44,13 @@ app.use(async (ctx, next) => {
     apiErrorManager(ctx, error); // error handler
   }
 });
+
+app.use(compress({
+  //filter: (content_type) => {
+  //  return true
+  //},
+  //threshold: 10,
+}))
 
 app.use(router.routes());
 app.use(

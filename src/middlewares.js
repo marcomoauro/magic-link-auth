@@ -112,6 +112,7 @@ export const authenticate = async (ctx, next) => {
 };
 
 export const initCompressionConfig = async (ctx, next) => {
+  log.info('ctx.headers Accept-Encoding', ctx.headers['accept-encoding']);
   ctx.compress = false;
   await next();
 }

@@ -53,13 +53,6 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(compress({
-  //filter: (content_type) => {
-  //  return true
-  //},
-  //threshold: 10,
-}))
-
 app.use(router.routes());
 app.use(
   router.allowedMethods({

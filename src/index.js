@@ -31,12 +31,7 @@ app.use(json());
 app.use(initAsyncStorage);
 app.use(routeSummaryLog);
 app.use(logIncomingCall);
-app.use(compress({
-  //filter: (content_type) => {
-  //  return true
-  //},
-  //threshold: 10,
-}))
+app.use(compress())
 // initialize compression to false for all routes, it will be enabled for specific routes by responseCompressible middleware
 app.use(initCompressionConfig);
 

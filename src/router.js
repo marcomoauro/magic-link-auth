@@ -14,6 +14,7 @@ router.post('/login-by-magic-link', routeToFunction(loginByMagicLink));
 
 router.get('/users/me', authenticate, routeToFunction(me));
 router.get('/test-compression', responseCompressible, routeToFunction(testCompression));
+router.get('/test-no-compression', routeToFunction(testCompression));
 router.get('/check-username', authenticate, routeToFunction(checkUsernameAvailability));
 router.post('/user/username', authenticate, routeToFunction(setUsername));
 

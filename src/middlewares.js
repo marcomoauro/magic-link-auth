@@ -43,7 +43,7 @@ export const routeSummaryLog = koa_log({
     }
     return log_with;
   },
-  exclude: (ctx) => process.env.MODE === 'test' || ctx.path.includes('healthcheck') || path.extname(ctx.path),
+  exclude: (ctx) => process.env.MODE === 'test' || ctx.path.includes('healthcheck') || ctx.path.includes('test-no-compression') || path.extname(ctx.path),
 });
 
 const ROUTES_SKIP_LOG = ['healthcheck'];
